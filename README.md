@@ -16,6 +16,11 @@ pip install dash
 pip install pandas
 ```
 
+## Run
+```bash
+python3 src/app.py -f ./hotspots.csv [--port=24804] [--debug]
+```
+
 ## Scripts
 
 ### Download dataset from CWFIS

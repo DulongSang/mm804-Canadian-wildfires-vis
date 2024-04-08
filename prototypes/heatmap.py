@@ -11,9 +11,7 @@ Z_COLUMN: Literal['fwi', 'ros', 'hfi', 'estarea'] = 'estarea'
 
 df = pd.read_csv(HOTSPOTS_FILE_PATH)
 
-fig = px.density_mapbox(df, lat='lat', lon='lon', z=Z_COLUMN, radius=10,
+fig = px.density_mapbox(df, lat='lat', lon='lon', z=Z_COLUMN, radius=5,
                         center={"lat": 50, "lon": -100}, zoom=3,
                         mapbox_style="open-street-map")
 fig.show()
-
-# %%
