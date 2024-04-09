@@ -1,4 +1,13 @@
+import argparse
 import os
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Combine all csv files in a directory")
+    parser.add_argument("input_dir", type=str, help="Input directory")
+    parser.add_argument("output_file", type=str, help="Output file path")
+    return parser.parse_args()
+
 
 def combine_csv(input_dir: str, output_file: str):
     """
@@ -17,3 +26,8 @@ def combine_csv(input_dir: str, output_file: str):
                     print(f"Warning: headers mismatch in '{filename}', skipping...")
                     continue
                 out_f.write(rows)
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    combine_csv(args.input_dir, args.output_file)
