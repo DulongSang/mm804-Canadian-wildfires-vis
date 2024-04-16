@@ -5,7 +5,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from Dataset import Dataset
-
+from components.heatmap import heatmap
+from components.scatter_mapbox import scatter_mapbox
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -14,77 +15,6 @@ def parse_args():
     parser.add_argument('--debug', action='store_true')
     return parser.parse_args()
 
-
-def heatmap(app: Dash, dataset: Dataset):
-    @app.callback(
-        Output('heatmap', 'figure'),
-        Input('heatmap-col', 'value'),
-        Input('date-range-slider', 'value'),
-        Input('source-checklist', 'value'),
-        Input('fuel-checklist', 'value'))
-    def update_bar_chart(col: str, date_range: list[int], sources: list[str], fuels: list[str]):
-        [min_date, max_date] = date_range
-        min_date = datetime.fromordinal(min_date)
-        max_date = datetime.fromordinal(max_date)
-        df = dataset.filter(min_date=min_date, max_date=max_date, sources=sources, fuels=fuels)
-        return px.density_mapbox(df, lat='lat', lon='lon', z=col, radius=5,
-                            center={"lat": 50, "lon": -100}, zoom=3,
-                            mapbox_style="open-street-map")
-
-    min_date = dataset.min_date.toordinal()
-    max_date = dataset.max_date.toordinal()
-
-    return html.Div([
-        html.H3('Heatmap'),
-        dcc.Dropdown(
-            id='heatmap-col',
-            options=[
-                {'label': 'Fire Weather Index', 'value': 'fwi'},
-                {'label': 'Rate of Spread', 'value': 'ros'},
-                {'label': 'Head Fire Intensity', 'value': 'hfi'},
-                {'label': 'Estimated Area', 'value': 'estarea'}
-            ],
-            value='estarea'
-        ),
-        html.H3('Date Range'),
-        dcc.RangeSlider(
-            id='date-range-slider',
-            min=min_date,
-            max=max_date,
-            step=1,
-            value=[min_date, max_date],
-            marks={
-                min_date: dataset.min_date.strftime('%Y-%m-%d'),
-                max_date: dataset.max_date.strftime('%Y-%m-%d'),
-            }
-        ),
-        html.H3('Sources'),
-        dcc.Checklist(
-            id='source-checklist',
-            options=[{'label': source, 'value': source} for source in dataset.source_types],
-            value=dataset.source_types,
-            inline=True
-        ),
-        html.H3('Fuels'),
-        dcc.Checklist(
-            id='fuel-checklist',
-            options=[{'label': fuel, 'value': fuel} for fuel in dataset.fuel_types],
-            value=dataset.fuel_types,
-            inline=True
-        ),
-        dcc.Graph(id='heatmap', style={'height': '80vh'})
-    ])
-
-
-def scatter_mapbox(app: Dash, dataset: Dataset):
-    fig = px.scatter_mapbox(dataset.df, lat="lat", lon="lon", size='estarea', size_max=15,
-                        color='fuel',
-                        center={"lat": 50, "lon": -100}, zoom=3,
-                        mapbox_style="open-street-map")
-    return html.Div([
-        html.H3('Scatter Mapbox'),
-        dcc.Graph(id='scatter-mapbox', figure=fig, style={'height': '80vh'})
-    ])
 
 def line_chart(app: Dash, dataset: Dataset):
     fig = go.Figure()
