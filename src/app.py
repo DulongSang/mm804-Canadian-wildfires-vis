@@ -1,12 +1,11 @@
 import argparse
-from datetime import datetime
 from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
-import plotly.graph_objects as go
 
 from Dataset import Dataset
 from components.heatmap import heatmap
 from components.scatter_mapbox import scatter_mapbox
+from components.trend_line_chart import trend_line_chart
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -14,50 +13,6 @@ def parse_args():
     parser.add_argument('--port', type=int, default=24804)
     parser.add_argument('--debug', action='store_true')
     return parser.parse_args()
-
-
-def line_chart(app: Dash, dataset: Dataset):
-    fig = go.Figure()
-    daily_count = dataset.df.groupby(dataset.df['rep_date'].dt.date).size().sort_index()
-    fig.add_trace(
-        go.Scatter(x=list(daily_count.index), y=list(daily_count.values)))
-    
-    fig.update_layout(
-        height=800,
-        xaxis=dict(
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=1,
-                        label="1m",
-                        step="month",
-                        stepmode="backward"),
-                    dict(count=6,
-                        label="6m",
-                        step="month",
-                        stepmode="backward"),
-                    dict(count=1,
-                        label="YTD",
-                        step="year",
-                        stepmode="todate"),
-                    dict(count=1,
-                        label="1y",
-                        step="year",
-                        stepmode="backward"),
-                    dict(step="all")
-                ])
-            ),
-            rangeslider=dict(
-                visible=True
-            ),
-            type="date"
-        )
-    )
-
-    return html.Div([
-        html.H3('Line Chart'),
-        dcc.Graph(id='line-chart', figure=fig)
-    ])
-
 
 def pie_chart(app: Dash, dataset: Dataset):
     fig = px.pie(dataset.df, names='source', title='Sources of Wildfires')
@@ -82,12 +37,12 @@ def main():
     dataset = Dataset(args.hotspots_file_path)
 
     app = Dash()
-    app.title = 'Wildfire Visualization'
+    app.title = 'CWFIS Wildfire Visualization'
     app.layout = html.Div([
-        html.H1('Wildfire Visualization'),
+        html.H1('CWFIS Wildfire Visualization'),
         heatmap(app, dataset),
         scatter_mapbox(app, dataset),
-        line_chart(app, dataset),
+        trend_line_chart(app, dataset),
         pie_chart(app, dataset),
         box_plot(app, dataset),
     ])
