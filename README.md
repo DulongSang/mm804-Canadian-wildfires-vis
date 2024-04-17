@@ -10,7 +10,7 @@
 - dash >= 2.16
 - pandas >= 2.10
 
-### Install Pypi Dependencies
+### Install PyPI Dependencies
 ```bash
 pip install dash
 pip install pandas
@@ -33,3 +33,5 @@ python3 scripts/combine_csv.py ./hotspots ./hotspots.csv
 ```bash
 python3 src/app.py -f ./hotspots.csv [--port=24804] [--debug]
 ```
+
+The app is running on [http://127.0.0.1:24084](http://127.0.0.1:24084) by default.

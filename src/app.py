@@ -1,8 +1,8 @@
 import argparse
-from dash import Dash, dcc, html, Input, Output
-import plotly.express as px
+from dash import Dash, html
 
 from Dataset import Dataset
+from components.box_plot import box_plot
 from components.heatmap import heatmap
 from components.pie_chart import pie_chart
 from components.scatter_mapbox import scatter_mapbox
@@ -14,15 +14,6 @@ def parse_args():
     parser.add_argument('--port', type=int, default=24804)
     parser.add_argument('--debug', action='store_true')
     return parser.parse_args()
-
-
-def box_plot(app: Dash, dataset: Dataset):
-    fig = px.box(dataset.df, x='fuel', y='estarea', title='Estimated Area by Source')
-    fig.update_layout(height=800)
-    return html.Div([
-        html.H3('Box Plot'),
-        dcc.Graph(id='box-plot', figure=fig)
-    ])
 
 
 def main():
