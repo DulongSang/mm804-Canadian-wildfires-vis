@@ -4,6 +4,7 @@ import plotly.express as px
 
 from Dataset import Dataset
 from components.heatmap import heatmap
+from components.pie_chart import pie_chart
 from components.scatter_mapbox import scatter_mapbox
 from components.trend_line_chart import trend_line_chart
 
@@ -13,14 +14,6 @@ def parse_args():
     parser.add_argument('--port', type=int, default=24804)
     parser.add_argument('--debug', action='store_true')
     return parser.parse_args()
-
-def pie_chart(app: Dash, dataset: Dataset):
-    fig = px.pie(dataset.df, names='source', title='Sources of Wildfires')
-    fig.update_layout(height=800)
-    return html.Div([
-        html.H3('Pie Chart'),
-        dcc.Graph(id='pie-chart', figure=fig)
-    ])
 
 
 def box_plot(app: Dash, dataset: Dataset):
